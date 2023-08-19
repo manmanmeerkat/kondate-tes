@@ -1,8 +1,9 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Button from './Button';
 import Page2 from './Page2';
+import Page3 from './Page3';
 
 
 
@@ -11,7 +12,21 @@ const Home = () => {
           const navigate = useNavigate();
           const [post, setPosts] = useState([])
           const [name, setName] = useState('');
+          const [searchQuery, setSerachQuery] = useState([]);
+          const ref = useRef();
+
+          const handleSearch = () => {
+            console.log(ref.current.value);
+
+            //フィルタリング
+            setSerachQuery(
+              post.filter((post) => 
+                post.name.toLowerCase().includes(ref.current.value)
+                )
+            );
+          };
   
+        //データ取得
           useEffect(() => {
             axios.get("http://localhost:8000/api/list")
               .then(response => setPosts(response.data))
@@ -23,14 +38,14 @@ const Home = () => {
         };
           
       
-         
+        //更新処理
         const Change = () => {
                 axios.get("http://localhost:8000/api/list")
                 .then(res => {
                     setPosts(res.data)
             })
             }
-
+        //新規作成
         const createNewUser = () => {
                 axios
                   .post("http://localhost:8000/api/menus", {
@@ -43,7 +58,7 @@ const Home = () => {
                     console.log(error);
                   });
               };
-
+        //削除処理
         const deleteUser = (id) => {
                 axios
                   .delete(`http://localhost:8000/api/menus/${id}`)
@@ -54,7 +69,7 @@ const Home = () => {
                   .catch((error) => console.log(error));
               };
 
-
+        //詳細表示
         const showUser = (id) => {
                 axios.get(`http://localhost:8000/api/menus/${id}`)
                   .then(response => setPosts(response.data))
@@ -68,11 +83,14 @@ const Home = () => {
 
   return (
     <>
-    <input value={name} onChange={handleChange} /><br />
+    <input className='border-black' ref={ref} onChange={() => handleSearch()} />
+    <div>
+    <input type="text" value={name} onChange={handleChange} className='border-red-500'/><br />
+    </div>
     <button onClick={ createNewUser }>作成</button>
-    <div>{post.map((post) => (
+    <div>{searchQuery.map((post) => (
           <div key={post.id}>
-        <p className='bg-color-red text-red-500'><span className="ml-2 italic">{post.id}{post.name}<button onClick={onClickDetail}>Page1</button>
+        <p className='bg-color-red text-red-500'><span className="ml-2 italic">{post.id} : {post.name}
         
         </span></p>
         <button onClick={Change}
@@ -82,6 +100,7 @@ const Home = () => {
           別のにする
         </button>
         <Page2 id={post.id} name={post.name}/>
+        <Page3 id={post.id} name={post.name}/>
         <button onClick={() => deleteUser(post.id)}>削除</button>
         <button onClick={() => showUser(post.id)}>詳細</button>
       </div>
