@@ -1,6 +1,10 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import Button from './Button';
+import Page2 from './Page2';
+
+
 
 const Home = () => {
 
@@ -77,6 +81,7 @@ const Home = () => {
         >
           別のにする
         </button>
+        <Page2 id={post.id} name={post.name}/>
         <button onClick={() => deleteUser(post.id)}>削除</button>
         <button onClick={() => showUser(post.id)}>詳細</button>
       </div>
