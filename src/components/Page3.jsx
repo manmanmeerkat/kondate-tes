@@ -13,7 +13,7 @@ const Page3 = (props) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         name={props.name}
-        description={'マンマンマン'}
+        description={props.memo}
       ></Edit>
     </div>
   )
